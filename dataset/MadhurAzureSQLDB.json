@@ -2,7 +2,7 @@
 	"name": "MadhurAzureSQLDB",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "MadhurAzureSQL",
+			"referenceName": "AzureSqlDatabase1",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
