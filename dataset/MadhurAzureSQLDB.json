@@ -1,0 +1,26 @@
+{
+	"name": "MadhurAzureSQLDB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MadhurAzureSQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "name",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "temp"
+		}
+	}
+}
