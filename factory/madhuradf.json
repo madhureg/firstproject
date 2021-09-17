@@ -1,0 +1,9 @@
+{
+	"name": "madhuradf",
+	"location": "southindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ef63f5c8-6887-4644-92b6-72bf1db631fd",
+		"tenantId": "604c1504-c6a3-4080-81aa-b33091104187"
+	}
+}
