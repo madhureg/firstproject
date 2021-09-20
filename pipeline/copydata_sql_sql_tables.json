@@ -39,23 +39,23 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"tableName": {
-								"value": "@pipeline().parameters.sourcetableNamefrompipeline",
+								"value": "@pipeline().parameters.src_tblNamefrompipeline",
 								"type": "Expression"
 							},
 							"dbNameDataset": {
-								"value": "@pipeline().parameters.sourcedbNamefrompipeline",
+								"value": "@pipeline().parameters.src_dbNamefrompipeline",
 								"type": "Expression"
 							},
 							"serverName": {
-								"value": "@pipeline().parameters.serverNamesource",
+								"value": "@pipeline().parameters.src_serverName",
 								"type": "Expression"
 							},
 							"userName": {
-								"value": "@pipeline().parameters.userNameSource",
+								"value": "@pipeline().parameters.src_userName",
 								"type": "Expression"
 							},
 							"password": {
-								"value": "@pipeline().parameters.passwordSource",
+								"value": "@pipeline().parameters.src_password",
 								"type": "Expression"
 							}
 						}
@@ -67,23 +67,23 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"tableName": {
-								"value": "@pipeline().parameters.destinationtableNamefrompipeline",
+								"value": "@pipeline().parameters.des_tableNamefrompipeline",
 								"type": "Expression"
 							},
 							"dbNameDataset": {
-								"value": "@pipeline().parameters.destinationdbNamefrompipeline",
+								"value": "@pipeline().parameters.des_dbNamefrompipeline",
 								"type": "Expression"
 							},
 							"serverName": {
-								"value": "@pipeline().parameters.serverNameDestination",
+								"value": "@pipeline().parameters.Des_serverName",
 								"type": "Expression"
 							},
 							"userName": {
-								"value": "@pipeline().parameters.userNameDestination",
+								"value": "@pipeline().parameters.Des_tiuserName",
 								"type": "Expression"
 							},
 							"password": {
-								"value": "@pipeline().parameters.passwordDestination",
+								"value": "@pipeline().parameters.Des_password",
 								"type": "Expression"
 							}
 						}
@@ -92,34 +92,34 @@
 			}
 		],
 		"parameters": {
-			"sourcetableNamefrompipeline": {
+			"src_tblNamefrompipeline": {
 				"type": "String"
 			},
-			"sourcedbNamefrompipeline": {
+			"src_dbNamefrompipeline": {
 				"type": "String"
 			},
-			"serverNamesource": {
+			"src_serverName": {
 				"type": "String"
 			},
-			"userNameSource": {
+			"src_userName": {
 				"type": "String"
 			},
-			"passwordSource": {
+			"src_password": {
 				"type": "String"
 			},
-			"serverNameDestination": {
+			"Des_serverName": {
 				"type": "String"
 			},
-			"userNameDestination": {
+			"Des_tiuserName": {
 				"type": "String"
 			},
-			"passwordDestination": {
+			"Des_password": {
 				"type": "String"
 			},
-			"destinationtableNamefrompipeline": {
+			"des_tableNamefrompipeline": {
 				"type": "string"
 			},
-			"destinationdbNamefrompipeline": {
+			"des_dbNamefrompipeline": {
 				"type": "string"
 			}
 		},
