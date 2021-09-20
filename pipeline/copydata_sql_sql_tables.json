@@ -39,11 +39,11 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"tableName": {
-								"value": "@pipeline().parameters.tableNamefrompipeline",
+								"value": "@pipeline().parameters.sourcetableNamefrompipeline",
 								"type": "Expression"
 							},
 							"dbNameDataset": {
-								"value": "@pipeline().parameters.dbNamefrompipeline",
+								"value": "@pipeline().parameters.sourcedbNamefrompipeline",
 								"type": "Expression"
 							},
 							"serverName": {
@@ -67,11 +67,11 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"tableName": {
-								"value": "@pipeline().parameters.tableNamefrompipeline",
+								"value": "@pipeline().parameters.destinationtableNamefrompipeline",
 								"type": "Expression"
 							},
 							"dbNameDataset": {
-								"value": "@pipeline().parameters.dbNamefrompipeline",
+								"value": "@pipeline().parameters.destinationdbNamefrompipeline",
 								"type": "Expression"
 							},
 							"serverName": {
@@ -92,10 +92,10 @@
 			}
 		],
 		"parameters": {
-			"tableNamefrompipeline": {
+			"sourcetableNamefrompipeline": {
 				"type": "String"
 			},
-			"dbNamefrompipeline": {
+			"sourcedbNamefrompipeline": {
 				"type": "String"
 			},
 			"serverNamesource": {
@@ -115,6 +115,12 @@
 			},
 			"passwordDestination": {
 				"type": "String"
+			},
+			"destinationtableNamefrompipeline": {
+				"type": "string"
+			},
+			"destinationdbNamefrompipeline": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
