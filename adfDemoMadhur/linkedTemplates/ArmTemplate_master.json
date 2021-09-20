@@ -1,0 +1,91 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfDemoMadhur"
+		},
+		"AzureSQL_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSQL'"
+		},
+		"FaltFileStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'FaltFileStorage'"
+		},
+		"OnPremise_SQLServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'OnPremise_SQLServer'"
+		},
+		"linkedservice_sql_parametrised_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'linkedservice_sql_parametrised'"
+		},
+		"linkedservice_storageDemoMadhur_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'linkedservice_storageDemoMadhur'"
+		},
+		"parametrised_SqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'parametrised_SqlServer'"
+		},
+		"Event_trigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/2eb288f0-205d-43c5-9356-449b90daee2e/resourceGroups/learn-7ca565da-b5f3-4c0d-866e-0e2e1de2f1e0/providers/Microsoft.Storage/storageAccounts/madhurstorage"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adfDemoMadhur_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureSQL_connectionString": {
+						"value": "[parameters('AzureSQL_connectionString')]"
+					},
+					"FaltFileStorage_connectionString": {
+						"value": "[parameters('FaltFileStorage_connectionString')]"
+					},
+					"linkedservice_storageDemoMadhur_connectionString": {
+						"value": "[parameters('linkedservice_storageDemoMadhur_connectionString')]"
+					},
+					"OnPremise_SQLServer_connectionString": {
+						"value": "[parameters('OnPremise_SQLServer_connectionString')]"
+					},
+					"linkedservice_sql_parametrised_connectionString": {
+						"value": "[parameters('linkedservice_sql_parametrised_connectionString')]"
+					},
+					"parametrised_SqlServer_connectionString": {
+						"value": "[parameters('parametrised_SqlServer_connectionString')]"
+					},
+					"Event_trigger_properties_typeProperties_scope": {
+						"value": "[parameters('Event_trigger_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
