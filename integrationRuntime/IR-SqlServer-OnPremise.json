@@ -1,0 +1,6 @@
+{
+	"name": "IR-SqlServer-OnPremise",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
