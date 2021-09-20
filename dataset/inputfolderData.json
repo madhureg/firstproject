@@ -11,8 +11,7 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "temp.txt",
-				"folderPath": "input",
-				"container": "adfdemo"
+				"container": "input"
 			}
 		}
 	},
