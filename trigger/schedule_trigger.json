@@ -14,6 +14,18 @@
 				"pipelineReference": {
 					"referenceName": "copydata_sql_sql_tables",
 					"type": "PipelineReference"
+				},
+				"parameters": {
+					"src_tblNamefrompipeline": "CountryRegion",
+					"src_dbNamefrompipeline": "SSIS_Demo",
+					"src_serverName": "MADHUR-PC",
+					"src_userName": "madhur01",
+					"src_password": "Pass#word1",
+					"Des_serverName": "madhurtest.database.windows.net",
+					"Des_tiuserName": "madhur",
+					"Des_password": "Pass#word1",
+					"des_tableNamefrompipeline": "CountryRegion",
+					"des_dbNamefrompipeline": "madhurdb"
 				}
 			}
 		],
