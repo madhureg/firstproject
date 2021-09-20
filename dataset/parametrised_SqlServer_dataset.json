@@ -8,6 +8,18 @@
 				"dbName": {
 					"value": "@dataset().dbNameDataset",
 					"type": "Expression"
+				},
+				"serverName": {
+					"value": "@dataset().serverName",
+					"type": "Expression"
+				},
+				"userName": {
+					"value": "@dataset().userName",
+					"type": "Expression"
+				},
+				"password": {
+					"value": "@dataset().password",
+					"type": "Expression"
 				}
 			}
 		},
@@ -16,6 +28,15 @@
 				"type": "string"
 			},
 			"dbNameDataset": {
+				"type": "string"
+			},
+			"serverName": {
+				"type": "string"
+			},
+			"userName": {
+				"type": "string"
+			},
+			"password": {
 				"type": "string"
 			}
 		},
