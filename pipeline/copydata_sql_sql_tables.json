@@ -45,6 +45,18 @@
 							"dbNameDataset": {
 								"value": "@pipeline().parameters.dbNamefrompipeline",
 								"type": "Expression"
+							},
+							"serverName": {
+								"value": "@pipeline().parameters.serverNamesource",
+								"type": "Expression"
+							},
+							"userName": {
+								"value": "@pipeline().parameters.userNameSource",
+								"type": "Expression"
+							},
+							"password": {
+								"value": "@pipeline().parameters.passwordSource",
+								"type": "Expression"
 							}
 						}
 					}
@@ -61,6 +73,18 @@
 							"dbNameDataset": {
 								"value": "@pipeline().parameters.dbNamefrompipeline",
 								"type": "Expression"
+							},
+							"serverName": {
+								"value": "@pipeline().parameters.serverNameDestination",
+								"type": "Expression"
+							},
+							"userName": {
+								"value": "@pipeline().parameters.userNameDestination",
+								"type": "Expression"
+							},
+							"password": {
+								"value": "@pipeline().parameters.passwordDestination",
+								"type": "Expression"
 							}
 						}
 					}
@@ -72,6 +96,24 @@
 				"type": "String"
 			},
 			"dbNamefrompipeline": {
+				"type": "String"
+			},
+			"serverNamesource": {
+				"type": "String"
+			},
+			"userNameSource": {
+				"type": "String"
+			},
+			"passwordSource": {
+				"type": "String"
+			},
+			"serverNameDestination": {
+				"type": "String"
+			},
+			"userNameDestination": {
+				"type": "String"
+			},
+			"passwordDestination": {
 				"type": "String"
 			}
 		},
