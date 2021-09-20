@@ -1,0 +1,56 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfDemoMadhur"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/schedule_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "copydata_sql_sql_tables",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"src_tblNamefrompipeline": "CountryRegion",
+							"src_dbNamefrompipeline": "SSIS_Demo",
+							"src_serverName": "MADHUR-PC",
+							"src_userName": "madhur01",
+							"src_password": "Pass#word1",
+							"Des_serverName": "madhurtest.database.windows.net",
+							"Des_tiuserName": "madhur",
+							"Des_password": "Pass#word1",
+							"des_tableNamefrompipeline": "CountryRegion",
+							"des_dbNamefrompipeline": "madhurdb"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 10,
+						"startTime": "2021-09-20T07:30:00",
+						"endTime": "2021-09-21T02:50:39",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
