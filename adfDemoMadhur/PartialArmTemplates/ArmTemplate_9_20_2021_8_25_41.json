@@ -1,0 +1,190 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfDemoMadhur"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/copydata_sql_sql_tables')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "SqlServerSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "parametrised_SqlServer_dataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": {
+										"value": "@pipeline().parameters.src_tblNamefrompipeline",
+										"type": "Expression"
+									},
+									"dbNameDataset": {
+										"value": "@pipeline().parameters.src_dbNamefrompipeline",
+										"type": "Expression"
+									},
+									"serverName": {
+										"value": "@pipeline().parameters.src_serverName",
+										"type": "Expression"
+									},
+									"userName": {
+										"value": "@pipeline().parameters.src_userName",
+										"type": "Expression"
+									},
+									"password": {
+										"value": "@pipeline().parameters.src_password",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "parametrised_SqlServer_dataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": {
+										"value": "@pipeline().parameters.des_tableNamefrompipeline",
+										"type": "Expression"
+									},
+									"dbNameDataset": {
+										"value": "@pipeline().parameters.des_dbNamefrompipeline",
+										"type": "Expression"
+									},
+									"serverName": {
+										"value": "@pipeline().parameters.Des_serverName",
+										"type": "Expression"
+									},
+									"userName": {
+										"value": "@pipeline().parameters.Des_tiuserName",
+										"type": "Expression"
+									},
+									"password": {
+										"value": "@pipeline().parameters.Des_password",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"src_tblNamefrompipeline": {
+						"type": "String"
+					},
+					"src_dbNamefrompipeline": {
+						"type": "String"
+					},
+					"src_serverName": {
+						"type": "String"
+					},
+					"src_userName": {
+						"type": "String"
+					},
+					"src_password": {
+						"type": "String"
+					},
+					"Des_serverName": {
+						"type": "String"
+					},
+					"Des_tiuserName": {
+						"type": "String"
+					},
+					"Des_password": {
+						"type": "String"
+					},
+					"des_tableNamefrompipeline": {
+						"type": "string"
+					},
+					"des_dbNamefrompipeline": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-09-20T00:50:16Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/schedule_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "copydata_sql_sql_tables",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"src_tblNamefrompipeline": "CountryRegion",
+							"src_dbNamefrompipeline": "SSIS_Demo",
+							"src_serverName": "MADHUR-PC",
+							"src_userName": "madhur01",
+							"src_password": "Pass#word1",
+							"Des_serverName": "madhurtest.database.windows.net",
+							"Des_tiuserName": "madhur",
+							"Des_password": "Pass#word1",
+							"des_tableNamefrompipeline": "CountryRegion",
+							"des_dbNamefrompipeline": "madhurdb"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 10,
+						"startTime": "2021-09-20T07:30:00",
+						"endTime": "2021-09-21T02:50:39",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/copydata_sql_sql_tables')]"
+			]
+		}
+	]
+}

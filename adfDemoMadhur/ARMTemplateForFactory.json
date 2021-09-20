@@ -34,6 +34,46 @@
 		"Event_trigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/2eb288f0-205d-43c5-9356-449b90daee2e/resourceGroups/learn-7ca565da-b5f3-4c0d-866e-0e2e1de2f1e0/providers/Microsoft.Storage/storageAccounts/madhurstorage"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "SSIS_Demo"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName": {
+			"type": "string",
+			"defaultValue": "MADHUR-PC"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName": {
+			"type": "string",
+			"defaultValue": "madhur01"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName": {
+			"type": "string",
+			"defaultValue": "madhurtest.database.windows.net"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName": {
+			"type": "string",
+			"defaultValue": "madhur"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "madhurdb"
 		}
 	},
 	"variables": {
@@ -83,23 +123,23 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"tableName": {
-										"value": "@pipeline().parameters.tableNamefrompipeline",
+										"value": "@pipeline().parameters.src_tblNamefrompipeline",
 										"type": "Expression"
 									},
 									"dbNameDataset": {
-										"value": "@pipeline().parameters.dbNamefrompipeline",
+										"value": "@pipeline().parameters.src_dbNamefrompipeline",
 										"type": "Expression"
 									},
 									"serverName": {
-										"value": "@pipeline().parameters.serverNamesource",
+										"value": "@pipeline().parameters.src_serverName",
 										"type": "Expression"
 									},
 									"userName": {
-										"value": "@pipeline().parameters.userNameSource",
+										"value": "@pipeline().parameters.src_userName",
 										"type": "Expression"
 									},
 									"password": {
-										"value": "@pipeline().parameters.passwordSource",
+										"value": "@pipeline().parameters.src_password",
 										"type": "Expression"
 									}
 								}
@@ -111,23 +151,23 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"tableName": {
-										"value": "@pipeline().parameters.tableNamefrompipeline",
+										"value": "@pipeline().parameters.des_tableNamefrompipeline",
 										"type": "Expression"
 									},
 									"dbNameDataset": {
-										"value": "@pipeline().parameters.dbNamefrompipeline",
+										"value": "@pipeline().parameters.des_dbNamefrompipeline",
 										"type": "Expression"
 									},
 									"serverName": {
-										"value": "@pipeline().parameters.serverNameDestination",
+										"value": "@pipeline().parameters.Des_serverName",
 										"type": "Expression"
 									},
 									"userName": {
-										"value": "@pipeline().parameters.userNameDestination",
+										"value": "@pipeline().parameters.Des_tiuserName",
 										"type": "Expression"
 									},
 									"password": {
-										"value": "@pipeline().parameters.passwordDestination",
+										"value": "@pipeline().parameters.Des_password",
 										"type": "Expression"
 									}
 								}
@@ -140,29 +180,35 @@
 					"cancelAfter": {}
 				},
 				"parameters": {
-					"tableNamefrompipeline": {
+					"src_tblNamefrompipeline": {
 						"type": "String"
 					},
-					"dbNamefrompipeline": {
+					"src_dbNamefrompipeline": {
 						"type": "String"
 					},
-					"serverNamesource": {
+					"src_serverName": {
 						"type": "String"
 					},
-					"userNameSource": {
+					"src_userName": {
 						"type": "String"
 					},
-					"passwordSource": {
+					"src_password": {
 						"type": "String"
 					},
-					"serverNameDestination": {
+					"Des_serverName": {
 						"type": "String"
 					},
-					"userNameDestination": {
+					"Des_tiuserName": {
 						"type": "String"
 					},
-					"passwordDestination": {
+					"Des_password": {
 						"type": "String"
+					},
+					"des_tableNamefrompipeline": {
+						"type": "string"
+					},
+					"des_dbNamefrompipeline": {
+						"type": "string"
 					}
 				},
 				"annotations": [],
@@ -533,28 +579,40 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Stopped",
+				"runtimeState": "Started",
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "pipeline1",
+							"referenceName": "copydata_sql_sql_tables",
 							"type": "PipelineReference"
 						},
-						"parameters": {}
+						"parameters": {
+							"src_tblNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline')]",
+							"src_dbNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline')]",
+							"src_serverName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName')]",
+							"src_userName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName')]",
+							"src_password": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password')]",
+							"Des_serverName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName')]",
+							"Des_tiuserName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName')]",
+							"Des_password": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password')]",
+							"des_tableNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline')]",
+							"des_dbNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline')]"
+						}
 					}
 				],
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
 						"frequency": "Minute",
-						"interval": 1,
-						"startTime": "2021-09-19T15:13:00",
+						"interval": 10,
+						"startTime": "2021-09-20T07:30:00",
+						"endTime": "2021-09-21T02:50:39",
 						"timeZone": "India Standard Time"
 					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pipeline1')]"
+				"[concat(variables('factoryId'), '/pipelines/copydata_sql_sql_tables')]"
 			]
 		},
 		{

@@ -35,6 +35,46 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/2eb288f0-205d-43c5-9356-449b90daee2e/resourceGroups/learn-7ca565da-b5f3-4c0d-866e-0e2e1de2f1e0/providers/Microsoft.Storage/storageAccounts/madhurstorage"
 		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "SSIS_Demo"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName": {
+			"type": "string",
+			"defaultValue": "MADHUR-PC"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName": {
+			"type": "string",
+			"defaultValue": "madhur01"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName": {
+			"type": "string",
+			"defaultValue": "madhurtest.database.windows.net"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName": {
+			"type": "string",
+			"defaultValue": "madhur"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "madhurdb"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -82,6 +122,36 @@
 					},
 					"Event_trigger_properties_typeProperties_scope": {
 						"value": "[parameters('Event_trigger_properties_typeProperties_scope')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline')]"
 					}
 				}
 			},
