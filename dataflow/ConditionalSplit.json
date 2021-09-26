@@ -18,7 +18,7 @@
 					"name": "ConditionalSpilDeptId"
 				}
 			],
-			"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nEmployee split(equals(deptId, '1'),\n\tequals(deptId, '2'),\n\tequals(deptId, '3'),\n\tdisjoint: false) ~> ConditionalSpilDeptId@(HR, Accounts, IT, PAYROLL)"
+			"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nEmployee split(equals(deptId, 1),\n\tequals(deptId, 2),\n\tequals(deptId, 3),\n\tdisjoint: false) ~> ConditionalSpilDeptId@(HR, Accounts, IT, PAYROLL)"
 		}
 	}
 }
