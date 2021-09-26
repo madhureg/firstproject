@@ -10,8 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "output.txt",
-				"container": "output"
+				"container": "adfstorage"
 			}
 		}
 	},
