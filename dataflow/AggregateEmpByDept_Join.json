@@ -1,0 +1,42 @@
+{
+	"name": "AggregateEmpByDept_Join",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "employeeDataSet",
+						"type": "DatasetReference"
+					},
+					"name": "Employee"
+				},
+				{
+					"dataset": {
+						"referenceName": "departmentDataSet",
+						"type": "DatasetReference"
+					},
+					"name": "department"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "OutputFolder",
+						"type": "DatasetReference"
+					},
+					"name": "OutputDatabyDepartmentName"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AggregateOnDept"
+				},
+				{
+					"name": "Joins"
+				}
+			],
+			"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nsource(output(\n\t\tdeptId as short,\n\t\tdeptName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> department\nEmployee aggregate(groupBy(deptId),\n\tTotalEmployees = count(empId)) ~> AggregateOnDept\nAggregateOnDept, department join(AggregateOnDept@deptId == department@deptId,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Joins\nJoins sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['DepartmentNamebyEmployeeCount'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\t{Department Name} = deptName,\n\t\t{Total Employees} = TotalEmployees\n\t),\n\tpartitionBy('hash', 1)) ~> OutputDatabyDepartmentName"
+		}
+	}
+}
