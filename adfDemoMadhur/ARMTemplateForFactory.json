@@ -81,6 +81,53 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/AggregateEmpWithDeptData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "AggregateActivity",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "AggregateEmpByDept",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Employee": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/AggregateEmpByDept')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DataFlowEmpDept')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -126,6 +173,54 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/employee_department')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EmployeeAggregateDatabyDeptName')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "AggregateEmpByDept_Join",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Employee": {},
+									"department": {},
+									"OutputDatabyDepartmentName": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/AggregateEmpByDept_Join')]"
 			]
 		},
 		{
@@ -1062,6 +1157,55 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AggregateEmpByDept_Join')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "employeeDataSet",
+								"type": "DatasetReference"
+							},
+							"name": "Employee"
+						},
+						{
+							"dataset": {
+								"referenceName": "departmentDataSet",
+								"type": "DatasetReference"
+							},
+							"name": "department"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "OutputFolder",
+								"type": "DatasetReference"
+							},
+							"name": "OutputDatabyDepartmentName"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AggregateOnDept"
+						},
+						{
+							"name": "Joins"
+						}
+					],
+					"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nsource(output(\n\t\tdeptId as short,\n\t\tdeptName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> department\nEmployee aggregate(groupBy(deptId),\n\tTotalEmployees = count(empId)) ~> AggregateOnDept\nAggregateOnDept, department join(AggregateOnDept@deptId == department@deptId,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Joins\nJoins sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['DepartmentNamebyEmployeeCount'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\t{Department Name} = deptName,\n\t\t{Total Employees} = TotalEmployees\n\t),\n\tpartitionBy('hash', 1)) ~> OutputDatabyDepartmentName"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/employeeDataSet')]",
+				"[concat(variables('factoryId'), '/datasets/departmentDataSet')]",
+				"[concat(variables('factoryId'), '/datasets/OutputFolder')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/FilterPayroll')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1156,19 +1300,6 @@
 				"[concat(variables('factoryId'), '/datasets/departmentDataSet')]",
 				"[concat(variables('factoryId'), '/datasets/OutputFolder')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/A')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": []
 		}
 	]
 }
