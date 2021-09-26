@@ -11,7 +11,8 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "temp.txt",
-				"container": "input"
+				"folderPath": "inbox",
+				"container": "adfstorage"
 			}
 		}
 	},
