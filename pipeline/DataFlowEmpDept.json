@@ -1,0 +1,32 @@
+{
+	"name": "DataFlowEmpDept",
+	"properties": {
+		"activities": [
+			{
+				"name": "EmpToDept",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "employee_department",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 80,
+						"computeType": "MemoryOptimized"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
