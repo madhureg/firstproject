@@ -122,6 +122,24 @@
 					},
 					"Event_trigger_properties_typeProperties_scope": {
 						"value": "[parameters('Event_trigger_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "adfDemoMadhur_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
 						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline')]"
@@ -155,7 +173,9 @@
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfDemoMadhur_ArmTemplate_0')]"
+			]
 		}
 	]
 }

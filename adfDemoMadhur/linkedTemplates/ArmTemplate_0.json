@@ -34,46 +34,6 @@
 		"Event_trigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/2eb288f0-205d-43c5-9356-449b90daee2e/resourceGroups/learn-7ca565da-b5f3-4c0d-866e-0e2e1de2f1e0/providers/Microsoft.Storage/storageAccounts/madhurstorage"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
-			"type": "string",
-			"defaultValue": "CountryRegion"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline": {
-			"type": "string",
-			"defaultValue": "SSIS_Demo"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName": {
-			"type": "string",
-			"defaultValue": "MADHUR-PC"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName": {
-			"type": "string",
-			"defaultValue": "madhur01"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password": {
-			"type": "string",
-			"defaultValue": "Pass#word1"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName": {
-			"type": "string",
-			"defaultValue": "madhurtest.database.windows.net"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName": {
-			"type": "string",
-			"defaultValue": "madhur"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password": {
-			"type": "string",
-			"defaultValue": "Pass#word1"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline": {
-			"type": "string",
-			"defaultValue": "CountryRegion"
-		},
-		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline": {
-			"type": "string",
-			"defaultValue": "madhurdb"
 		}
 	},
 	"variables": {
@@ -210,6 +170,33 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Binary1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_storageDemoMadhur",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/inputfolderData')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -332,6 +319,208 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/employeeDataSet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_storageDemoMadhur",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "employee.txt",
+						"folderPath": "inbox",
+						"container": "adfstorage"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/departmentDataSet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_storageDemoMadhur",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "department.txt",
+						"folderPath": "inbox",
+						"container": "adfstorage"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OutputFolder')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_storageDemoMadhur",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "outbox",
+						"container": "adfstorage"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FileExistOrNot')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "FileCheck",
+						"type": "Until",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@bool(variables('FileExist'))",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "FileExistorNot",
+									"type": "GetMetadata",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "inputfolderData",
+											"type": "DatasetReference",
+											"parameters": {}
+										},
+										"fieldList": [
+											"exists"
+										],
+										"storeSettings": {
+											"type": "AzureBlobStorageReadSettings",
+											"recursive": true,
+											"enablePartitionDiscovery": false
+										},
+										"formatSettings": {
+											"type": "BinaryReadSettings"
+										}
+									}
+								},
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "FileExistorNot",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@bool(activity('FileExistorNot').output.exists)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Wait1",
+												"type": "Wait",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"waitTimeInSeconds": 120
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Set variable1",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "FileExist",
+													"value": "True"
+												}
+											}
+										]
+									}
+								}
+							],
+							"timeout": "7.00:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"variables": {
+					"FileExist": {
+						"type": "String",
+						"defaultValue": "False"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/inputfolderData')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -397,242 +586,114 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/parametrised_SqlServer_dataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "parametrised_SqlServer",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"dbName": {
-							"value": "@dataset().dbNameDataset",
-							"type": "Expression"
-						},
-						"serverName": {
-							"value": "@dataset().serverName",
-							"type": "Expression"
-						},
-						"userName": {
-							"value": "@dataset().userName",
-							"type": "Expression"
-						},
-						"password": {
-							"value": "@dataset().password",
-							"type": "Expression"
-						}
-					}
-				},
-				"parameters": {
-					"tableName": {
-						"type": "string"
-					},
-					"dbNameDataset": {
-						"type": "string"
-					},
-					"serverName": {
-						"type": "string"
-					},
-					"userName": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": {
-						"value": "@dataset().tableName",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/parametrised_SqlServer')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/copydata_sql_sql_tables')]",
+			"name": "[concat(parameters('factoryName'), '/until_file_search')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
-						"type": "Copy",
+						"name": "FileChecking",
+						"type": "Until",
 						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
 						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
+							"expression": {
+								"value": "@bool(variables('FileExists'))",
+								"type": "Expression"
 							},
-							"sink": {
-								"type": "SqlServerSink"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "parametrised_SqlServer_dataset",
-								"type": "DatasetReference",
-								"parameters": {
-									"tableName": {
-										"value": "@pipeline().parameters.src_tblNamefrompipeline",
-										"type": "Expression"
+							"activities": [
+								{
+									"name": "FileExistOrNot",
+									"type": "GetMetadata",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
 									},
-									"dbNameDataset": {
-										"value": "@pipeline().parameters.src_dbNamefrompipeline",
-										"type": "Expression"
-									},
-									"serverName": {
-										"value": "@pipeline().parameters.src_serverName",
-										"type": "Expression"
-									},
-									"userName": {
-										"value": "@pipeline().parameters.src_userName",
-										"type": "Expression"
-									},
-									"password": {
-										"value": "@pipeline().parameters.src_password",
-										"type": "Expression"
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "inputfolderData",
+											"type": "DatasetReference",
+											"parameters": {}
+										},
+										"fieldList": [
+											"exists"
+										],
+										"storeSettings": {
+											"type": "AzureBlobStorageReadSettings",
+											"recursive": true,
+											"enablePartitionDiscovery": false
+										},
+										"formatSettings": {
+											"type": "BinaryReadSettings"
+										}
+									}
+								},
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "FileExistOrNot",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@bool(activity('FileExistOrNot').output.exists)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Wait1",
+												"type": "Wait",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"waitTimeInSeconds": 120
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Set variable1",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "FileExists",
+													"value": "true"
+												}
+											}
+										]
 									}
 								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "parametrised_SqlServer_dataset",
-								"type": "DatasetReference",
-								"parameters": {
-									"tableName": {
-										"value": "@pipeline().parameters.des_tableNamefrompipeline",
-										"type": "Expression"
-									},
-									"dbNameDataset": {
-										"value": "@pipeline().parameters.des_dbNamefrompipeline",
-										"type": "Expression"
-									},
-									"serverName": {
-										"value": "@pipeline().parameters.Des_serverName",
-										"type": "Expression"
-									},
-									"userName": {
-										"value": "@pipeline().parameters.Des_tiuserName",
-										"type": "Expression"
-									},
-									"password": {
-										"value": "@pipeline().parameters.Des_password",
-										"type": "Expression"
-									}
-								}
-							}
-						]
+							],
+							"timeout": "7.00:00:00"
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"parameters": {
-					"src_tblNamefrompipeline": {
-						"type": "String"
-					},
-					"src_dbNamefrompipeline": {
-						"type": "String"
-					},
-					"src_serverName": {
-						"type": "String"
-					},
-					"src_userName": {
-						"type": "String"
-					},
-					"src_password": {
-						"type": "String"
-					},
-					"Des_serverName": {
-						"type": "String"
-					},
-					"Des_tiuserName": {
-						"type": "String"
-					},
-					"Des_password": {
-						"type": "String"
-					},
-					"des_tableNamefrompipeline": {
-						"type": "string"
-					},
-					"des_dbNamefrompipeline": {
-						"type": "string"
+				"variables": {
+					"FileExists": {
+						"type": "String",
+						"defaultValue": "False"
 					}
 				},
-				"annotations": [],
-				"lastPublishTime": "2021-09-20T00:50:16Z"
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/parametrised_SqlServer_dataset')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/schedule_trigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "copydata_sql_sql_tables",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"src_tblNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline')]",
-							"src_dbNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline')]",
-							"src_serverName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName')]",
-							"src_userName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName')]",
-							"src_password": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password')]",
-							"Des_serverName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName')]",
-							"Des_tiuserName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName')]",
-							"Des_password": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password')]",
-							"des_tableNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline')]",
-							"des_dbNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 10,
-						"startTime": "2021-09-20T07:30:00",
-						"endTime": "2021-09-21T02:50:39",
-						"timeZone": "India Standard Time"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/copydata_sql_sql_tables')]"
+				"[concat(variables('factoryId'), '/datasets/inputfolderData')]"
 			]
 		}
 	]
