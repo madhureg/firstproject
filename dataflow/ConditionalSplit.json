@@ -12,13 +12,42 @@
 					"name": "Employee"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "OutputFolder",
+						"type": "DatasetReference"
+					},
+					"name": "HREmployees"
+				},
+				{
+					"dataset": {
+						"referenceName": "OutputFolder",
+						"type": "DatasetReference"
+					},
+					"name": "AccountsEmployees"
+				},
+				{
+					"dataset": {
+						"referenceName": "OutputFolder",
+						"type": "DatasetReference"
+					},
+					"name": "ITEmployees"
+				},
+				{
+					"dataset": {
+						"referenceName": "OutputFolder",
+						"type": "DatasetReference"
+					},
+					"name": "OtherEmployees"
+				}
+			],
 			"transformations": [
 				{
 					"name": "ConditionalSpilDeptId"
 				}
 			],
-			"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nEmployee split(equals(deptId, 1),\n\tequals(deptId, 2),\n\tequals(deptId, 3),\n\tdisjoint: false) ~> ConditionalSpilDeptId@(HR, Accounts, IT, PAYROLL)"
+			"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nEmployee split(equals(deptId, 1),\n\tequals(deptId, 2),\n\tequals(deptId, 3),\n\tdisjoint: false) ~> ConditionalSpilDeptId@(HR, Accounts, IT, PAYROLL)\nConditionalSpilDeptId@HR sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['HREmployees'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> HREmployees\nConditionalSpilDeptId@Accounts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['AccountsEmployees'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> AccountsEmployees\nConditionalSpilDeptId@IT sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['ITEmployees'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> ITEmployees\nConditionalSpilDeptId@PAYROLL sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['OtherEmployees'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> OtherEmployees"
 		}
 	}
 }
