@@ -1,5 +1,5 @@
 {
-	"name": "AlterTransformation",
+	"name": "AlterTransformations",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -26,7 +26,7 @@
 					"name": "AlteractionMade"
 				}
 			],
-			"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nEmployee alterRow(updateIf(deptId == 1),\n\tdeleteIf(deptId == 2),\n\tupsertIf(deptId == 3)) ~> AlteractionMade\nAlteractionMade sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:true,\n\tinsertable:true,\n\tupdateable:true,\n\tupsertable:true,\n\tkeys:['empId'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> EmployeeFileToDB"
+			"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nEmployee alterRow(updateIf(deptId == 1),\n\tdeleteIf(deptId == 2),\n\tupsertIf(deptId == 3)) ~> AlteractionMade\nAlteractionMade sink(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tinput(\n\t\tEmpID as integer,\n\t\tEmpName as string,\n\t\tEmpGender as string,\n\t\tDeptId as integer\n\t),\n\tdeletable:true,\n\tinsertable:true,\n\tupdateable:true,\n\tupsertable:true,\n\tkeys:['empId'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tempId,\n\t\tempName,\n\t\tempGender,\n\t\tdeptId\n\t)) ~> EmployeeFileToDB"
 		}
 	}
 }
