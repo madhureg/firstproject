@@ -1,0 +1,59 @@
+{
+	"name": "JsonDataSet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "linkedservice_storageDemoMadhur",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Employee.json",
+				"folderPath": "inbox",
+				"container": "adfstorage"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"Employees": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"userId": {
+								"type": "string"
+							},
+							"jobTitleName": {
+								"type": "string"
+							},
+							"firstName": {
+								"type": "string"
+							},
+							"lastName": {
+								"type": "string"
+							},
+							"preferredFullName": {
+								"type": "string"
+							},
+							"employeeCode": {
+								"type": "string"
+							},
+							"region": {
+								"type": "string"
+							},
+							"phoneNumber": {
+								"type": "string"
+							},
+							"emailAddress": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
