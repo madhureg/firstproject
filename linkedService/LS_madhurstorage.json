@@ -1,0 +1,19 @@
+{
+	"name": "LS_madhurstorage",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "Linked Service for Madhur Storage ",
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_KV_adfmadhur",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "secret-madhurstorage-connectionstring"
+			}
+		}
+	}
+}
