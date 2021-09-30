@@ -31,6 +31,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'parametrised_SqlServer'"
 		},
+		"LS_KV_adfmadhur_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://KV-DEV-MADHUR.vault.azure.net/"
+		},
+		"LS_madhurstorage_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "secret-madhurstorage-connectionstring"
+		},
 		"Event_trigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/2eb288f0-205d-43c5-9356-449b90daee2e/resourceGroups/learn-7ca565da-b5f3-4c0d-866e-0e2e1de2f1e0/providers/Microsoft.Storage/storageAccounts/madhurstorage"
@@ -117,11 +125,14 @@
 					"linkedservice_sql_parametrised_connectionString": {
 						"value": "[parameters('linkedservice_sql_parametrised_connectionString')]"
 					},
-					"parametrised_SqlServer_connectionString": {
-						"value": "[parameters('parametrised_SqlServer_connectionString')]"
+					"LS_KV_adfmadhur_properties_typeProperties_baseUrl": {
+						"value": "[parameters('LS_KV_adfmadhur_properties_typeProperties_baseUrl')]"
 					},
 					"Event_trigger_properties_typeProperties_scope": {
 						"value": "[parameters('Event_trigger_properties_typeProperties_scope')]"
+					},
+					"LS_madhurstorage_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('LS_madhurstorage_properties_typeProperties_connectionString_secretName')]"
 					}
 				}
 			},
@@ -135,6 +146,29 @@
 				"mode": "incremental",
 				"templateLink": {
 					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"parametrised_SqlServer_connectionString": {
+						"value": "[parameters('parametrised_SqlServer_connectionString')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfDemoMadhur_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "adfDemoMadhur_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
 					"contentVersion": "1.0.0.0"
 				},
 				"parameters": {
@@ -174,7 +208,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'adfDemoMadhur_ArmTemplate_0')]"
+				"[resourceId('Microsoft.Resources/deployments', 'adfDemoMadhur_ArmTemplate_1')]"
 			]
 		}
 	]

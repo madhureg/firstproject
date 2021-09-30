@@ -1,0 +1,96 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfDemoMadhur"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "SSIS_Demo"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName": {
+			"type": "string",
+			"defaultValue": "MADHUR-PC"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName": {
+			"type": "string",
+			"defaultValue": "madhur01"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName": {
+			"type": "string",
+			"defaultValue": "madhurtest.database.windows.net"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName": {
+			"type": "string",
+			"defaultValue": "madhur"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "madhurdb"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/schedule_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "copydata_sql_sql_tables",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"src_tblNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline')]",
+							"src_dbNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline')]",
+							"src_serverName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName')]",
+							"src_userName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName')]",
+							"src_password": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password')]",
+							"Des_serverName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName')]",
+							"Des_tiuserName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName')]",
+							"Des_password": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password')]",
+							"des_tableNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline')]",
+							"des_dbNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 10,
+						"startTime": "2021-09-20T07:30:00",
+						"endTime": "2021-09-21T02:50:39",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

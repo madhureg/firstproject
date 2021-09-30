@@ -23,6 +23,12 @@
 		"parametrised_SqlServer_connectionString": {
 			"value": ""
 		},
+		"LS_KV_adfmadhur_properties_typeProperties_baseUrl": {
+			"value": "https://KV-DEV-MADHUR.vault.azure.net/"
+		},
+		"LS_madhurstorage_properties_typeProperties_connectionString_secretName": {
+			"value": "secret-madhurstorage-connectionstring"
+		},
 		"Event_trigger_properties_typeProperties_scope": {
 			"value": "/subscriptions/2eb288f0-205d-43c5-9356-449b90daee2e/resourceGroups/learn-7ca565da-b5f3-4c0d-866e-0e2e1de2f1e0/providers/Microsoft.Storage/storageAccounts/madhurstorage"
 		},
