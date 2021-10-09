@@ -1,0 +1,9 @@
+{
+	"name": "ADF-DEV-Madhur",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "38d7146c-87fa-4a57-9b33-5035f59d1c14",
+		"tenantId": "4fda8a98-f19f-4e4f-a05f-af0ada2338f5"
+	}
+}

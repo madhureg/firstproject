@@ -1,0 +1,11 @@
+{
+	"name": "ls_KV_dev_madhur",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://KV1-DEV-MADHUR.vault.azure.net/"
+		}
+	}
+}
