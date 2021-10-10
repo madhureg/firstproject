@@ -1,0 +1,24 @@
+{
+	"name": "tempTableMetadata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "FaltFileStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "tempTable.txt",
+				"folderPath": "inbox",
+				"container": "adfstorage"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
