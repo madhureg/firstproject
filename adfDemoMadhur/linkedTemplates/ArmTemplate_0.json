@@ -19,25 +19,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'linkedservice_storageDemoMadhur'"
 		},
-		"OnPremise_SQLServer_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'OnPremise_SQLServer'"
-		},
-		"linkedservice_sql_parametrised_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'linkedservice_sql_parametrised'"
-		},
 		"LS_KV_adfmadhur_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://KV-DEV-MADHUR.vault.azure.net/"
 		},
+		"ls_KV_dev_madhur_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://KV1-DEV-MADHUR.vault.azure.net/"
+		},
 		"Event_trigger_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/2eb288f0-205d-43c5-9356-449b90daee2e/resourceGroups/learn-7ca565da-b5f3-4c0d-866e-0e2e1de2f1e0/providers/Microsoft.Storage/storageAccounts/madhurstorage"
-		},
-		"LS_madhurstorage_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "secret-madhurstorage-connectionstring"
 		}
 	},
 	"variables": {
@@ -145,6 +137,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ls_KV_dev_madhur')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('ls_KV_dev_madhur_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Event_trigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -227,7 +232,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Binary1')]",
+			"name": "[concat(parameters('factoryName'), '/OutPutFolderName')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -248,6 +253,71 @@
 						"container": "output"
 					}
 				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinaryDatasetForDeleteActivity')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connect to your source store to delete files.",
+				"linkedServiceName": {
+					"referenceName": "linkedservice_storageDemoMadhur",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderPath": {
+						"type": "string"
+					},
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": {
+							"value": "@dataset().Directory",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "@dataset().FolderPath",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linkedservice_storageDemoMadhur",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "inbox",
+						"container": "adfstorage"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
@@ -448,72 +518,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LS_madhurstorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Linked Service for Madhur Storage ",
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "LS_KV_adfmadhur",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "[parameters('LS_madhurstorage_properties_typeProperties_connectionString_secretName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_KV_adfmadhur')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/OnPremise_SQLServer')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('OnPremise_SQLServer_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "IR-SelfHosted",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/IR-SelfHosted')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/linkedservice_sql_parametrised')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"parameters": {
-					"dbName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('linkedservice_sql_parametrised_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "IR-SelfHosted",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/IR-SelfHosted')]"
 			]
 		}
 	]
