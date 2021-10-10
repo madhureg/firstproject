@@ -1,5 +1,5 @@
 {
-	"name": "Binary1",
+	"name": "OutPutFolderName",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "linkedservice_storageDemoMadhur",
