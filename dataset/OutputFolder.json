@@ -2,7 +2,7 @@
 	"name": "OutputFolder",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "linkedservice_storageDemoMadhur",
+			"referenceName": "FaltFileStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
