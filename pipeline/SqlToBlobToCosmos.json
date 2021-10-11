@@ -1,0 +1,220 @@
+{
+	"name": "SqlToBlobToCosmos",
+	"properties": {
+		"activities": [
+			{
+				"name": "SqlToBlob",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSqlTable",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "OutputFolder",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "SqlToBlob",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "output",
+							"wildcardFileName": "*.txt",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "CosmosDbMongoDbApiSink",
+						"writeBatchTimeout": "00:30:00",
+						"writeBehavior": "insert"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "OutputFolder",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_cosmosdb",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "SqlToBlob",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-27.northcentralus.logic.azure.com:443/workflows/be13ca44fdd543c2ac89396ed058fef4/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WgmS_hKFxRFAwfuzPXe1WJTQOmVvbTwa4sTommV8CoQ",
+					"method": "GET"
+				}
+			},
+			{
+				"name": "Stored procedure1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "SqlToBlob",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[metadata_sp]",
+					"storedProcedureParameters": {
+						"copyduration": {
+							"value": {
+								"value": "@activity('SqlToBlob').output.copyDuration",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"datafactoryname": {
+							"value": {
+								"value": "@pipeline().DataFactory",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"datareads": {
+							"value": {
+								"value": "@activity('SqlToBlob').output.dataRead",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"datawrites": {
+							"value": "@activity('SqlToBlob').output.dataWrite",
+							"type": "Int32"
+						},
+						"executionendtime": {
+							"value": "@activity('SqlToBlob').output.ExecutionEndTime",
+							"type": "DateTime"
+						},
+						"executionstarttime": {
+							"value": "@activity('SqlToBlob').output.ExecutionStartTime",
+							"type": "DateTime"
+						},
+						"pilelineid": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"pilelinename": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"status": {
+							"value": {
+								"value": "@activity('SqlToBlob').output.Status",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
