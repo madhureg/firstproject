@@ -1,0 +1,30 @@
+{
+	"name": "CorrectSqlData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "name",
+				"type": "varchar"
+			},
+			{
+				"name": "DOB",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tempTable"
+		}
+	}
+}
