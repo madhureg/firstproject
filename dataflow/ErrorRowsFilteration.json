@@ -15,10 +15,17 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "AzureSqlTable",
+						"referenceName": "BadData",
 						"type": "DatasetReference"
 					},
 					"name": "BadData"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable",
+						"type": "DatasetReference"
+					},
+					"name": "CorrectRows"
 				}
 			],
 			"transformations": [
@@ -32,7 +39,7 @@
 					"name": "DerivedColumn2"
 				}
 			],
-			"script": "source(output(\n\t\tid as short,\n\t\tname as string,\n\t\tdob as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> tempTable\ntempTable split(isNull(toDate(dob, 'yyyy-mm-dd')),\n\tdisjoint: false) ~> ConditionalSplit1@(ErrorOutput, RestOfTheRows)\nConditionalSplit1@ErrorOutput derive(dob = toDate(dob, 'yyy-mm-dd')) ~> DerivedColumn1\nConditionalSplit1@RestOfTheRows derive(dob = toDate(dob, 'yyy-mm-dd')) ~> DerivedColumn2\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tEmpID as integer,\n\t\tEmpName as string,\n\t\tEmpGender as string,\n\t\tDeptId as integer\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> BadData"
+			"script": "source(output(\n\t\tid as short,\n\t\tname as string,\n\t\tdob as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> tempTable\ntempTable split(isNull(toDate(dob, 'yyyy-mm-dd')),\n\tdisjoint: false) ~> ConditionalSplit1@(ErrorOutput, RestOfTheRows)\nConditionalSplit1@ErrorOutput derive(dob = toDate(dob, 'yyy-mm-dd')) ~> DerivedColumn1\nConditionalSplit1@RestOfTheRows derive(dob = toDate(dob, 'yyy-mm-dd')) ~> DerivedColumn2\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tid as string,\n\t\tname as string,\n\t\tDOB as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> BadData\nDerivedColumn2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tEmpID as integer,\n\t\tEmpName as string,\n\t\tEmpGender as string,\n\t\tDeptId as integer\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> CorrectRows"
 		}
 	}
 }
