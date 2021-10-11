@@ -220,11 +220,11 @@
 							"type": "Int32"
 						},
 						"executionendtime": {
-							"value": "@activity('SqlToBlob').output.ExecutionEndTime",
+							"value": "@activity('SqlToBlob').ExecutionEndTime",
 							"type": "DateTime"
 						},
 						"executionstarttime": {
-							"value": "@activity('SqlToBlob').output.ExecutionStartTime",
+							"value": "@activity('SqlToBlob').ExecutionStartTime",
 							"type": "DateTime"
 						},
 						"pilelineid": {
