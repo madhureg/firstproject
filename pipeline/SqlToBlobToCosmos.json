@@ -213,7 +213,10 @@
 							"type": "Int32"
 						},
 						"datawrites": {
-							"value": "@activity('SqlToBlob').output.dataWrite",
+							"value": {
+								"value": "@activity('SqlToBlob').output.dataWritten",
+								"type": "Expression"
+							},
 							"type": "Int32"
 						},
 						"executionendtime": {
