@@ -11,9 +11,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSQL'"
 		},
+		"CosmosDbMongoDb_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDbMongoDb'"
+		},
 		"FaltFileStorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'FaltFileStorage'"
+		},
+		"LS_madhurstorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_madhurstorage'"
 		},
 		"OnPremise_SQLServer_connectionString": {
 			"type": "secureString",
@@ -31,21 +39,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'parametrised_SqlServer'"
 		},
-		"LS_KV_adfmadhur_properties_typeProperties_baseUrl": {
+		"CosmosDbMongoDb_properties_typeProperties_database": {
 			"type": "string",
-			"defaultValue": "https://KV-DEV-MADHUR.vault.azure.net/"
-		},
-		"LS_madhurstorage_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "secret-madhurstorage-connectionstring"
-		},
-		"ls_KV_dev_madhur_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://KV1-DEV-MADHUR.vault.azure.net/"
-		},
-		"ls_devmadhurstorage_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "sec-devmadhurstorage-connectionstring"
+			"defaultValue": "admin"
 		},
 		"Event_trigger_properties_typeProperties_scope": {
 			"type": "string",
@@ -141,53 +137,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/AggregateEmpByDept')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AlterPipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Alteration",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "1.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "AlterTransformations",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"Employee": {},
-									"EmptoDB": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/AlterTransformations')]"
 			]
 		},
 		{
@@ -420,6 +369,54 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ErrorOutputRows')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "ErrorRowsFilteration",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"tempTable": {},
+									"BadData": {},
+									"CorrectRows": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/ErrorRowsFilteration')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/FileExistOrNot')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -621,6 +618,284 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlToBlobToCosmos')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "SqlToBlob",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLDBTable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "OutputFolder",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SqlToBlob",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "output",
+									"wildcardFileName": "*.txt",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "CosmosDbMongoDbApiSink",
+								"writeBatchTimeout": "00:30:00",
+								"writeBehavior": "insert"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['id']"
+										}
+									},
+									{
+										"source": {
+											"name": "name",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['name']"
+										}
+									},
+									{
+										"source": {
+											"name": "dob",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['dob']"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "OutputFolder",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_cosmosdb",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Web1",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "SqlToBlob",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-27.northcentralus.logic.azure.com:443/workflows/be13ca44fdd543c2ac89396ed058fef4/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WgmS_hKFxRFAwfuzPXe1WJTQOmVvbTwa4sTommV8CoQ",
+							"method": "GET",
+							"headers": {}
+						}
+					},
+					{
+						"name": "Stored procedure1",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "SqlToBlob",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[metadata_sp]",
+							"storedProcedureParameters": {
+								"copyduration": {
+									"value": {
+										"value": "@activity('SqlToBlob').output.copyDuration",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"datafactoryname": {
+									"value": {
+										"value": "@pipeline().DataFactory",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"datareads": {
+									"value": {
+										"value": "@activity('SqlToBlob').output.dataRead",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"datawrites": {
+									"value": {
+										"value": "@activity('SqlToBlob').output.dataWritten",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"executionendtime": {
+									"value": {
+										"value": "@activity('SqlToBlob').ExecutionEndTime",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"executionstarttime": {
+									"value": {
+										"value": "@activity('SqlToBlob').ExecutionStartTime",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"pilelineid": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pilelinename": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"status": {
+									"value": {
+										"value": "@activity('SqlToBlob').status",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSQL",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSQLDBTable')]",
+				"[concat(variables('factoryId'), '/datasets/OutputFolder')]",
+				"[concat(variables('factoryId'), '/datasets/ds_cosmosdb')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureSQL')]"
 			]
 		},
 		{
@@ -986,7 +1261,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable')]",
+			"name": "[concat(parameters('factoryName'), '/AzureSQLDBTable')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -998,22 +1273,17 @@
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "EmpID",
-						"type": "int",
-						"precision": 10
+						"name": "id",
+						"type": "smallint",
+						"precision": 5
 					},
 					{
-						"name": "EmpName",
-						"type": "varchar"
+						"name": "name",
+						"type": "nvarchar"
 					},
 					{
-						"name": "EmpGender",
-						"type": "varchar"
-					},
-					{
-						"name": "DeptId",
-						"type": "int",
-						"precision": 10
+						"name": "dob",
+						"type": "date"
 					}
 				],
 				"typeProperties": {
@@ -1026,30 +1296,37 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OutPutFolderName')]",
+			"name": "[concat(parameters('factoryName'), '/BadData')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "linkedservice_storageDemoMadhur",
+					"referenceName": "AzureSQL",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"FolderName": {
-						"type": "string"
-					}
-				},
 				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "output"
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "varchar"
+					},
+					{
+						"name": "name",
+						"type": "varchar"
+					},
+					{
+						"name": "DOB",
+						"type": "varchar"
 					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "tempTableBadData"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureSQL')]"
 			]
 		},
 		{
@@ -1088,6 +1365,41 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CorrectSqlData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "name",
+						"type": "varchar"
+					},
+					{
+						"name": "DOB",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "tempTable"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSQL')]"
 			]
 		},
 		{
@@ -1182,12 +1494,39 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OutputFolder')]",
+			"name": "[concat(parameters('factoryName'), '/OutPutFolderName')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "linkedservice_storageDemoMadhur",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OutputFolder')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "FaltFileStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -1206,7 +1545,7 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+				"[concat(variables('factoryId'), '/linkedServices/FaltFileStorage')]"
 			]
 		},
 		{
@@ -1236,6 +1575,26 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_cosmosdb')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CosmosDbMongoDb",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbMongoDbApiCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": "admincollection"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CosmosDbMongoDb')]"
 			]
 		},
 		{
@@ -1374,6 +1733,35 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/tempTableMetadata')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "FaltFileStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "tempTable.txt",
+						"folderPath": "inbox",
+						"container": "adfstorage"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/FaltFileStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSQL')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1382,6 +1770,21 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSQL_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CosmosDbMongoDb')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDbMongoDbApi",
+				"typeProperties": {
+					"connectionString": "[parameters('CosmosDbMongoDb_connectionString')]",
+					"database": "[parameters('CosmosDbMongoDb_properties_typeProperties_database')]",
+					"isServerVersionAbove32": true
 				}
 			},
 			"dependsOn": []
@@ -1400,19 +1803,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LS_KV_adfmadhur')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('LS_KV_adfmadhur_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/LS_madhurstorage')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1421,19 +1811,10 @@
 				"annotations": [],
 				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"connectionString": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "LS_KV_adfmadhur",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "[parameters('LS_madhurstorage_properties_typeProperties_connectionString_secretName')]"
-					}
+					"connectionString": "[parameters('LS_madhurstorage_connectionString')]"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_KV_adfmadhur')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/OnPremise_SQLServer')]",
@@ -1490,41 +1871,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ls_KV_dev_madhur')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('ls_KV_dev_madhur_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ls_devmadhurstorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "ls_KV_dev_madhur",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "[parameters('ls_devmadhurstorage_properties_typeProperties_connectionString_secretName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_KV_dev_madhur')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/parametrised_SqlServer')]",
@@ -1731,44 +2077,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AlterTransformations')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "employeeDataSet",
-								"type": "DatasetReference"
-							},
-							"name": "Employee"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlTable",
-								"type": "DatasetReference"
-							},
-							"name": "EmptoDB"
-						}
-					],
-					"transformations": [
-						{
-							"name": "AlterationMade"
-						}
-					],
-					"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nEmployee alterRow(deleteIf(deptId==2),\n\tupsertIf(deptId==3)) ~> AlterationMade\nAlterationMade sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tEmpID as integer,\n\t\tEmpName as string,\n\t\tEmpGender as string,\n\t\tDeptId as integer\n\t),\n\tdeletable:true,\n\tinsertable:true,\n\tupdateable:true,\n\tupsertable:true,\n\tkeys:['EmpID'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tEmpGender = empGender,\n\t\tEmpID = empId,\n\t\tEmpName = empName,\n\t\tDeptId = deptId\n\t)) ~> EmptoDB"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/employeeDataSet')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlTable')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/ConditionalSplit')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1828,6 +2136,55 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ErrorRowsFilteration')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "tempTableMetadata",
+								"type": "DatasetReference"
+							},
+							"name": "tempTable"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "BadData",
+								"type": "DatasetReference"
+							},
+							"name": "BadData"
+						},
+						{
+							"dataset": {
+								"referenceName": "CorrectSqlData",
+								"type": "DatasetReference"
+							},
+							"name": "CorrectRows"
+						}
+					],
+					"transformations": [
+						{
+							"name": "ConditionalSplit1"
+						},
+						{
+							"name": "DerivedColumn2"
+						}
+					],
+					"script": "source(output(\n\t\tid as short,\n\t\tname as string,\n\t\tdob as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> tempTable\ntempTable split(isNull(toDate(dob, 'yyyy-mm-dd')),\n\tdisjoint: false) ~> ConditionalSplit1@(ErrorOutput, RestOfTheRows)\nConditionalSplit1@RestOfTheRows derive(dob = toDate(dob, 'yyyy-mm-dd')) ~> DerivedColumn2\nConditionalSplit1@ErrorOutput sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tid as string,\n\t\tname as string,\n\t\tDOB as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> BadData\nDerivedColumn2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tid as integer,\n\t\tname as string,\n\t\tDOB as date\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tid,\n\t\tname,\n\t\tDOB = dob\n\t)) ~> CorrectRows"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/tempTableMetadata')]",
+				"[concat(variables('factoryId'), '/datasets/BadData')]",
+				"[concat(variables('factoryId'), '/datasets/CorrectSqlData')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/FilterPayroll')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1863,40 +2220,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/employeeDataSet')]",
 				"[concat(variables('factoryId'), '/datasets/OutputFolder')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/FlattenTransformation')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "JsonDataSet",
-								"type": "DatasetReference"
-							},
-							"name": "EmployeeJson"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlTable",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"script": "source(output(\n\t\tEmployees as (emailAddress as string, employeeCode as string, firstName as string, jobTitleName as string, lastName as string, phoneNumber as string, preferredFullName as string, region as string, userId as string)[]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'singleDocument') ~> EmployeeJson\nEmployeeJson sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tEmpID as integer,\n\t\tEmpName as string,\n\t\tEmpGender as string,\n\t\tDeptId as integer\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/JsonDataSet')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlTable')]"
 			]
 		},
 		{

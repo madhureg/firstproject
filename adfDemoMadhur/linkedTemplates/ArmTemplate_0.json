@@ -11,21 +11,25 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSQL'"
 		},
+		"CosmosDbMongoDb_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDbMongoDb'"
+		},
 		"FaltFileStorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'FaltFileStorage'"
+		},
+		"LS_madhurstorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_madhurstorage'"
 		},
 		"linkedservice_storageDemoMadhur_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'linkedservice_storageDemoMadhur'"
 		},
-		"LS_KV_adfmadhur_properties_typeProperties_baseUrl": {
+		"CosmosDbMongoDb_properties_typeProperties_database": {
 			"type": "string",
-			"defaultValue": "https://KV-DEV-MADHUR.vault.azure.net/"
-		},
-		"ls_KV_dev_madhur_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://KV1-DEV-MADHUR.vault.azure.net/"
+			"defaultValue": "admin"
 		},
 		"Event_trigger_properties_typeProperties_scope": {
 			"type": "string",
@@ -98,6 +102,21 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/CosmosDbMongoDb')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDbMongoDbApi",
+				"typeProperties": {
+					"connectionString": "[parameters('CosmosDbMongoDb_connectionString')]",
+					"database": "[parameters('CosmosDbMongoDb_properties_typeProperties_database')]",
+					"isServerVersionAbove32": true
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/FaltFileStorage')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -111,14 +130,15 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LS_KV_adfmadhur')]",
+			"name": "[concat(parameters('factoryName'), '/LS_madhurstorage')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"description": "Linked Service for Madhur Storage ",
 				"annotations": [],
-				"type": "AzureKeyVault",
+				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"baseUrl": "[parameters('LS_KV_adfmadhur_properties_typeProperties_baseUrl')]"
+					"connectionString": "[parameters('LS_madhurstorage_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -132,19 +152,6 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('linkedservice_storageDemoMadhur_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ls_KV_dev_madhur')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('ls_KV_dev_madhur_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
@@ -192,7 +199,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable')]",
+			"name": "[concat(parameters('factoryName'), '/AzureSQLDBTable')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -204,22 +211,17 @@
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "EmpID",
-						"type": "int",
-						"precision": 10
+						"name": "id",
+						"type": "smallint",
+						"precision": 5
 					},
 					{
-						"name": "EmpName",
-						"type": "varchar"
+						"name": "name",
+						"type": "nvarchar"
 					},
 					{
-						"name": "EmpGender",
-						"type": "varchar"
-					},
-					{
-						"name": "DeptId",
-						"type": "int",
-						"precision": 10
+						"name": "dob",
+						"type": "date"
 					}
 				],
 				"typeProperties": {
@@ -232,30 +234,37 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OutPutFolderName')]",
+			"name": "[concat(parameters('factoryName'), '/BadData')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "linkedservice_storageDemoMadhur",
+					"referenceName": "AzureSQL",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"FolderName": {
-						"type": "string"
-					}
-				},
 				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "output"
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "varchar"
+					},
+					{
+						"name": "name",
+						"type": "varchar"
+					},
+					{
+						"name": "DOB",
+						"type": "varchar"
 					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "tempTableBadData"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureSQL')]"
 			]
 		},
 		{
@@ -294,6 +303,41 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CorrectSqlData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "name",
+						"type": "varchar"
+					},
+					{
+						"name": "DOB",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "tempTable"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSQL')]"
 			]
 		},
 		{
@@ -388,12 +432,39 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OutputFolder')]",
+			"name": "[concat(parameters('factoryName'), '/OutPutFolderName')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "linkedservice_storageDemoMadhur",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OutputFolder')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "FaltFileStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -412,7 +483,7 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+				"[concat(variables('factoryId'), '/linkedServices/FaltFileStorage')]"
 			]
 		},
 		{
@@ -445,79 +516,23 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/employeeDataSet')]",
+			"name": "[concat(parameters('factoryName'), '/ds_cosmosdb')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "linkedservice_storageDemoMadhur",
+					"referenceName": "CosmosDbMongoDb",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "DelimitedText",
+				"type": "CosmosDbMongoDbApiCollection",
+				"schema": [],
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "employee.txt",
-						"folderPath": "inbox",
-						"container": "adfstorage"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/inputfolderData')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "linkedservice_storageDemoMadhur",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "temp.txt",
-						"folderPath": "inbox",
-						"container": "adfstorage"
-					}
+					"collection": "admincollection"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/outputDataSet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "linkedservice_storageDemoMadhur",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "output",
-						"container": "adfstorage"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedservice_storageDemoMadhur')]"
+				"[concat(variables('factoryId'), '/linkedServices/CosmosDbMongoDb')]"
 			]
 		}
 	]

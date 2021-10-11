@@ -11,9 +11,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSQL'"
 		},
+		"CosmosDbMongoDb_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDbMongoDb'"
+		},
 		"FaltFileStorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'FaltFileStorage'"
+		},
+		"LS_madhurstorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_madhurstorage'"
 		},
 		"OnPremise_SQLServer_connectionString": {
 			"type": "secureString",
@@ -31,21 +39,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'parametrised_SqlServer'"
 		},
-		"LS_KV_adfmadhur_properties_typeProperties_baseUrl": {
+		"CosmosDbMongoDb_properties_typeProperties_database": {
 			"type": "string",
-			"defaultValue": "https://KV-DEV-MADHUR.vault.azure.net/"
-		},
-		"LS_madhurstorage_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "secret-madhurstorage-connectionstring"
-		},
-		"ls_KV_dev_madhur_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://KV1-DEV-MADHUR.vault.azure.net/"
-		},
-		"ls_devmadhurstorage_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "sec-devmadhurstorage-connectionstring"
+			"defaultValue": "admin"
 		},
 		"Event_trigger_properties_typeProperties_scope": {
 			"type": "string",
@@ -121,17 +117,20 @@
 					"AzureSQL_connectionString": {
 						"value": "[parameters('AzureSQL_connectionString')]"
 					},
+					"CosmosDbMongoDb_connectionString": {
+						"value": "[parameters('CosmosDbMongoDb_connectionString')]"
+					},
 					"FaltFileStorage_connectionString": {
 						"value": "[parameters('FaltFileStorage_connectionString')]"
+					},
+					"LS_madhurstorage_connectionString": {
+						"value": "[parameters('LS_madhurstorage_connectionString')]"
 					},
 					"linkedservice_storageDemoMadhur_connectionString": {
 						"value": "[parameters('linkedservice_storageDemoMadhur_connectionString')]"
 					},
-					"LS_KV_adfmadhur_properties_typeProperties_baseUrl": {
-						"value": "[parameters('LS_KV_adfmadhur_properties_typeProperties_baseUrl')]"
-					},
-					"ls_KV_dev_madhur_properties_typeProperties_baseUrl": {
-						"value": "[parameters('ls_KV_dev_madhur_properties_typeProperties_baseUrl')]"
+					"CosmosDbMongoDb_properties_typeProperties_database": {
+						"value": "[parameters('CosmosDbMongoDb_properties_typeProperties_database')]"
 					},
 					"Event_trigger_properties_typeProperties_scope": {
 						"value": "[parameters('Event_trigger_properties_typeProperties_scope')]"
@@ -162,12 +161,6 @@
 					},
 					"parametrised_SqlServer_connectionString": {
 						"value": "[parameters('parametrised_SqlServer_connectionString')]"
-					},
-					"LS_madhurstorage_properties_typeProperties_connectionString_secretName": {
-						"value": "[parameters('LS_madhurstorage_properties_typeProperties_connectionString_secretName')]"
-					},
-					"ls_devmadhurstorage_properties_typeProperties_connectionString_secretName": {
-						"value": "[parameters('ls_devmadhurstorage_properties_typeProperties_connectionString_secretName')]"
 					}
 				}
 			},
