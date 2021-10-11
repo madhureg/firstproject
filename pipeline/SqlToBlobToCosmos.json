@@ -243,7 +243,7 @@
 						},
 						"status": {
 							"value": {
-								"value": "@activity('SqlToBlob').output.Status",
+								"value": "@activity('SqlToBlob').status",
 								"type": "Expression"
 							},
 							"type": "String"
