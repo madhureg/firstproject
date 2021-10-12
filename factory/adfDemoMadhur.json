@@ -1,9 +1,9 @@
 {
 	"name": "adfDemoMadhur",
-	"location": "eastus2",
+	"location": "southcentralus",
 	"identity": {
 		"type": "SystemAssigned",
-		"principalId": "fca6078a-1142-4f32-9409-d3be01606c15",
+		"principalId": "e3334429-e362-47ad-9667-94003da6dbe4",
 		"tenantId": "4fda8a98-f19f-4e4f-a05f-af0ada2338f5"
 	}
 }
