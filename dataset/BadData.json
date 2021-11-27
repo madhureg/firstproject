@@ -23,7 +23,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "tempTableBadData"
+			"table": "tempRAWDataBAD"
 		}
 	}
 }
