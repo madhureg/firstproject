@@ -9,17 +9,30 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "id",
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Age",
 				"type": "int",
 				"precision": 10
 			},
 			{
-				"name": "name",
-				"type": "varchar"
+				"name": "Education",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Salary",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Occupation",
+				"type": "nvarchar"
 			},
 			{
 				"name": "DOB",
-				"type": "date"
+				"type": "varchar"
 			}
 		],
 		"typeProperties": {
