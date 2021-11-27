@@ -10,9 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "temp.txt",
-				"folderPath": "inbox",
-				"container": "adfstorage"
+				"fileName": "10000 Records.csv",
+				"container": "inbox"
 			}
 		}
 	},
