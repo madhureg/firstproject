@@ -6,7 +6,7 @@
 		"type": "AzureSqlDatabase",
 		"typeProperties": {
 			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=madhur.database.windows.net;initial catalog=madhur;user id=madhur",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFERkRFTU9NQURIVVJfOTMxNjk1YzMtYWEzYi00MWU0LWEzNjQtYzNhMGE0OGI1MjMzIg0KfQ=="
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQENERDQ5NUY0LTQ2MkEtNEE1QS05NjRBLUI5NENGQTQxMERDQ18zYjYxYTA1Mi00ZWY0LTQ2YTQtYWVmZS01OWY0NGYzMjY1ZTciDQp9"
 		}
 	}
 }
