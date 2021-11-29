@@ -118,7 +118,7 @@
 				"typeProperties": {
 					"variableName": "FileName",
 					"value": {
-						"value": "@activity('FileNameFetch').output.name",
+						"value": "@activity('FileNameFetch').output.childitems",
 						"type": "Expression"
 					}
 				}
