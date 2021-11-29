@@ -1,0 +1,17 @@
+{
+	"name": "OutPutFOlderPath",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_madhurstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "output"
+			}
+		}
+	}
+}
