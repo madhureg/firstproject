@@ -124,11 +124,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"FileNameParameters": {
-				"type": "string"
-			}
-		},
 		"variables": {
 			"FileName": {
 				"type": "String"
