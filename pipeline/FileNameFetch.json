@@ -102,6 +102,26 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "Variables",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "FileNameIteration",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "FileName",
+					"value": {
+						"value": "@activity('FileNameFetch').output.name",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
