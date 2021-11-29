@@ -1,0 +1,39 @@
+{
+	"name": "ErrorRowsMove",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "FlatFileSourc",
+						"type": "DatasetReference"
+					},
+					"name": "RawData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SQLConnection",
+						"type": "DatasetReference"
+					},
+					"name": "BadDataImport"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQLConnection",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "BadData"
+				}
+			],
+			"script": "source(output(\n\t\tName as string,\n\t\tAge as string,\n\t\tEducation as string,\n\t\tSalary as string,\n\t\tOccupation as string,\n\t\tDOB as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> RawData\nRawData split(isNull(toDate(DOB, 'yyyy-mm-dd')),\n\tdisjoint: false) ~> BadData@(ErroredData, GoodData)\nBadData@ErroredData sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tName as string,\n\t\tAge as integer,\n\t\tEducation as string,\n\t\tOccupation as string,\n\t\tDOB as string,\n\t\tSalary as integer\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tName,\n\t\tAge,\n\t\tEducation,\n\t\tOccupation,\n\t\tDOB,\n\t\tSalary\n\t)) ~> BadDataImport\nBadData@GoodData sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tName as string,\n\t\tAge as integer,\n\t\tEducation as string,\n\t\tOccupation as string,\n\t\tDOB as string,\n\t\tSalary as integer\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tName,\n\t\tAge,\n\t\tEducation,\n\t\tSalary,\n\t\tOccupation,\n\t\tDOB\n\t)) ~> sink1"
+		}
+	}
+}
