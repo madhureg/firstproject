@@ -1,0 +1,41 @@
+{
+	"name": "SQLConnectionBadData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SqlConnection",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Age",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Education",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Salary",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Occupation",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DOB",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TempRawDataBAD"
+		}
+	}
+}
