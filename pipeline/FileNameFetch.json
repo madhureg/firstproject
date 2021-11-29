@@ -76,7 +76,13 @@
 								"sink": {
 									"type": "BinarySink",
 									"storeSettings": {
-										"type": "AzureBlobStorageWriteSettings"
+										"type": "AzureBlobStorageWriteSettings",
+										"metadata": [
+											{
+												"name": "LastMofified",
+												"value": "$$LASTMODIFIED"
+											}
+										]
 									}
 								},
 								"enableStaging": false
@@ -101,26 +107,6 @@
 							]
 						}
 					]
-				}
-			},
-			{
-				"name": "Variables",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "FileNameIteration",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "FileName",
-					"value": {
-						"value": "@activity('FileNameFetch').output.childitems",
-						"type": "Expression"
-					}
 				}
 			}
 		],
