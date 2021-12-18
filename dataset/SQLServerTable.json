@@ -1,0 +1,33 @@
+{
+	"name": "SQLServerTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQLServer",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "DOB",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "empTable"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
