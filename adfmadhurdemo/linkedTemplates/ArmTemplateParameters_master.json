@@ -1,0 +1,99 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfmadhurdemo"
+		},
+		"AzureSQL_connectionString": {
+			"value": ""
+		},
+		"BlobStorage_connectionString": {
+			"value": ""
+		},
+		"CosmosDbMongoDb_connectionString": {
+			"value": ""
+		},
+		"FaltFileStorage_connectionString": {
+			"value": ""
+		},
+		"InboxFolderFIleName_accountKey": {
+			"value": ""
+		},
+		"LS_BlobStorage_connectionString": {
+			"value": ""
+		},
+		"LS_SQLLogin_connectionString": {
+			"value": ""
+		},
+		"LS_SQLServer_connectionString": {
+			"value": ""
+		},
+		"LS_SqlConnection_connectionString": {
+			"value": ""
+		},
+		"LS_madhurstorage_connectionString": {
+			"value": ""
+		},
+		"OnPremise_SQLServer_connectionString": {
+			"value": ""
+		},
+		"adf_blob_storage_connectionString": {
+			"value": ""
+		},
+		"linkedservice_sql_parametrised_connectionString": {
+			"value": ""
+		},
+		"linkedservice_storageDemoMadhur_connectionString": {
+			"value": ""
+		},
+		"parametrised_SqlServer_connectionString": {
+			"value": ""
+		},
+		"CosmosDbMongoDb_properties_typeProperties_database": {
+			"value": "admin"
+		},
+		"InboxFolderFIleName_properties_typeProperties_url": {
+			"value": "https://madhursadftorage.dfs.core.windows.net/"
+		},
+		"Event_trigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/2eb288f0-205d-43c5-9356-449b90daee2e/resourceGroups/learn-7ca565da-b5f3-4c0d-866e-0e2e1de2f1e0/providers/Microsoft.Storage/storageAccounts/madhurstorage"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
+			"value": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline": {
+			"value": "SSIS_Demo"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName": {
+			"value": "MADHUR-PC"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName": {
+			"value": "madhur01"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password": {
+			"value": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName": {
+			"value": "madhurtest.database.windows.net"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName": {
+			"value": "madhur"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password": {
+			"value": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline": {
+			"value": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline": {
+			"value": "madhurdb"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

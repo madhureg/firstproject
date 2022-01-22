@@ -1,0 +1,681 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfmadhurdemo"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "SSIS_Demo"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName": {
+			"type": "string",
+			"defaultValue": "MADHUR-PC"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName": {
+			"type": "string",
+			"defaultValue": "madhur01"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName": {
+			"type": "string",
+			"defaultValue": "madhurtest.database.windows.net"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName": {
+			"type": "string",
+			"defaultValue": "madhur"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "madhurdb"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ConditionalSplit')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "employeeDataSet",
+								"type": "DatasetReference"
+							},
+							"name": "Employee"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "OutputFolder",
+								"type": "DatasetReference"
+							},
+							"name": "HREmployees"
+						},
+						{
+							"dataset": {
+								"referenceName": "OutputFolder",
+								"type": "DatasetReference"
+							},
+							"name": "AccountsEmployees"
+						},
+						{
+							"dataset": {
+								"referenceName": "OutputFolder",
+								"type": "DatasetReference"
+							},
+							"name": "ITEmployees"
+						},
+						{
+							"dataset": {
+								"referenceName": "OutputFolder",
+								"type": "DatasetReference"
+							},
+							"name": "OtherEmployees"
+						}
+					],
+					"transformations": [
+						{
+							"name": "ConditionalSpilDeptId"
+						}
+					],
+					"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Employee\nEmployee split(equals(deptId, 1),\n\tequals(deptId, 2),\n\tequals(deptId, 3),\n\tdisjoint: false) ~> ConditionalSpilDeptId@(HR, Accounts, IT, PAYROLL)\nConditionalSpilDeptId@HR sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['HREmployees'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> HREmployees\nConditionalSpilDeptId@Accounts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['AccountsEmployees'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> AccountsEmployees\nConditionalSpilDeptId@IT sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['ITEmployees'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> ITEmployees\nConditionalSpilDeptId@PAYROLL sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['OtherEmployees'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> OtherEmployees"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ErrorRowsFilteration')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "tempTableMetadata",
+								"type": "DatasetReference"
+							},
+							"name": "tempTable"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "BadData",
+								"type": "DatasetReference"
+							},
+							"name": "BadData"
+						},
+						{
+							"dataset": {
+								"referenceName": "CorrectSqlData",
+								"type": "DatasetReference"
+							},
+							"name": "CorrectRows"
+						}
+					],
+					"transformations": [
+						{
+							"name": "ConditionalSplit1"
+						},
+						{
+							"name": "DerivedColumn2"
+						}
+					],
+					"script": "source(output(\n\t\tid as short,\n\t\tname as string,\n\t\tdob as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> tempTable\ntempTable split(isNull(toDate(dob, 'yyyy-mm-dd')),\n\tdisjoint: false) ~> ConditionalSplit1@(ErrorOutput, RestOfTheRows)\nConditionalSplit1@RestOfTheRows derive(dob = toDate(dob, 'yyyy-mm-dd')) ~> DerivedColumn2\nConditionalSplit1@ErrorOutput sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tid as string,\n\t\tname as string,\n\t\tDOB as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> BadData\nDerivedColumn2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tName as string,\n\t\tAge as integer,\n\t\tEducation as string,\n\t\tSalary as integer,\n\t\tOccupation as string,\n\t\tDOB as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tid,\n\t\tname,\n\t\tDOB = dob\n\t)) ~> CorrectRows"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ErrorRowsMove')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "FlatFileSourc",
+								"type": "DatasetReference"
+							},
+							"name": "RawData"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "SQLConnectionBadData",
+								"type": "DatasetReference"
+							},
+							"name": "BadDataImport"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQLConnection",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "BadData"
+						}
+					],
+					"script": "source(output(\n\t\tName as string,\n\t\tAge as string,\n\t\tEducation as string,\n\t\tSalary as string,\n\t\tOccupation as string,\n\t\tDOB as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> RawData\nRawData split(isNull(toDate(DOB, 'yyyy-mm-dd')),\n\tdisjoint: false) ~> BadData@(ErroredData, GoodData)\nBadData@ErroredData sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tName as string,\n\t\tAge as string,\n\t\tEducation as string,\n\t\tSalary as string,\n\t\tOccupation as string,\n\t\tDOB as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tName,\n\t\tAge,\n\t\tEducation,\n\t\tOccupation,\n\t\tDOB,\n\t\tSalary\n\t)) ~> BadDataImport\nBadData@GoodData sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tName as string,\n\t\tAge as integer,\n\t\tEducation as string,\n\t\tOccupation as string,\n\t\tDOB as string,\n\t\tSalary as integer\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tName,\n\t\tAge,\n\t\tEducation,\n\t\tSalary,\n\t\tOccupation,\n\t\tDOB\n\t)) ~> sink1"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FilterPayroll')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "employeeDataSet",
+								"type": "DatasetReference"
+							},
+							"name": "employee"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "OutputFolder",
+								"type": "DatasetReference"
+							},
+							"name": "outputPayroll"
+						}
+					],
+					"transformations": [
+						{
+							"name": "filterPayroll"
+						}
+					],
+					"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> employee\nemployee filter(equals(deptId,3)) ~> filterPayroll\nfilterPayroll sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> outputPayroll"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SCD2')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "data_employee_txtfile",
+								"type": "DatasetReference"
+							},
+							"name": "EmpDataTxtFile"
+						},
+						{
+							"dataset": {
+								"referenceName": "data_tblemployee_SQL",
+								"type": "DatasetReference"
+							},
+							"name": "SQLEmpTable"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "data_tblemployee_SQL",
+								"type": "DatasetReference"
+							},
+							"name": "tblEmployee"
+						},
+						{
+							"dataset": {
+								"referenceName": "data_tblemployee_SQL",
+								"type": "DatasetReference"
+							},
+							"name": "UpdateInactiveinSQL"
+						}
+					],
+					"transformations": [
+						{
+							"name": "isActiveColumnAdd"
+						},
+						{
+							"name": "RenameColumns"
+						},
+						{
+							"name": "Lookup1"
+						},
+						{
+							"name": "RemoveNulls"
+						},
+						{
+							"name": "RemoveUnWantedColumns"
+						},
+						{
+							"name": "isActiveCheck"
+						},
+						{
+							"name": "UpdateRows"
+						}
+					],
+					"script": "source(output(\n\t\tempId as integer,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> EmpDataTxtFile\nsource(output(\n\t\tsurKey as integer,\n\t\tempId as integer,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as integer,\n\t\tisActive as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SQLEmpTable\nEmpDataTxtFile derive(isActive = 1) ~> isActiveColumnAdd\nSQLEmpTable select(mapColumn(\n\t\tSQL_surKey = surKey,\n\t\tSQL_empId = empId,\n\t\tSQL_empName = empName,\n\t\tSQL_empGender = empGender,\n\t\tSQL_deptId = deptId,\n\t\tSQL_isActive = isActive\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RenameColumns\nEmpDataTxtFile, RenameColumns lookup(empId == SQL_empId,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup1\nLookup1 filter(!isNull(SQL_empId)) ~> RemoveNulls\nRemoveNulls select(mapColumn(\n\t\tSQL_surKey,\n\t\tSQL_empId,\n\t\tSQL_empName,\n\t\tSQL_empGender,\n\t\tSQL_deptId,\n\t\tSQL_isActive\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RemoveUnWantedColumns\nRemoveUnWantedColumns derive(SQL_isActive = 0) ~> isActiveCheck\nisActiveCheck alterRow(updateIf(1==1)) ~> UpdateRows\nisActiveColumnAdd sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tsurKey as integer,\n\t\tempId as integer,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as integer,\n\t\tisActive as integer\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tempId,\n\t\tempName,\n\t\tempGender,\n\t\tdeptId,\n\t\tisActive\n\t)) ~> tblEmployee\nUpdateRows sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tsurKey as integer,\n\t\tempId as integer,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as integer,\n\t\tisActive as integer\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['surKey'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tsurKey = SQL_surKey,\n\t\tempId = SQL_empId,\n\t\tempName = SQL_empName,\n\t\tempGender = SQL_empGender,\n\t\tdeptId = SQL_deptId,\n\t\tisActive = SQL_isActive\n\t)) ~> UpdateInactiveinSQL"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/employee_department')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "employeeDataSet",
+								"type": "DatasetReference"
+							},
+							"name": "employee"
+						},
+						{
+							"dataset": {
+								"referenceName": "departmentDataSet",
+								"type": "DatasetReference"
+							},
+							"name": "department"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "OutputFolder",
+								"type": "DatasetReference"
+							},
+							"name": "MergeBothEmpDept"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Joins"
+						},
+						{
+							"name": "deptModification",
+							"description": "Autogenerated by data preview actions"
+						},
+						{
+							"name": "empGenderModification",
+							"description": "Autogenerated by data preview actions"
+						},
+						{
+							"name": "empNameModification",
+							"description": "Autogenerated by data preview actions"
+						}
+					],
+					"script": "source(output(\n\t\tempId as short,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> employee\nsource(output(\n\t\tdeptId as short,\n\t\tdeptName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> department\nempGenderModification, department join(employee@deptId == department@deptId,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> Joins\ndepartment derive(deptName = upper(deptName)) ~> deptModification\nempNameModification derive(empGender = upper(empGender)) ~> empGenderModification\nemployee derive(empName = upper(empName)) ~> empNameModification\nJoins sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['EmpDeptMerger'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\tempId,\n\t\tempName,\n\t\tempGender,\n\t\tdeptName\n\t),\n\tpartitionBy('hash', 1)) ~> MergeBothEmpDept"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AggregateEmpWithDeptData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "AggregateActivity",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "AggregateEmpByDept",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Employee": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ConditionalSplit')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ConditionalSplit",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "ConditionalSplit",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Employee": {},
+									"HREmployees": {},
+									"AccountsEmployees": {},
+									"ITEmployees": {},
+									"OtherEmployees": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/ConditionalSplit')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DataFlowEmpDept')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "EmpToDept",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "employee_department",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"employee": {},
+									"department": {},
+									"MergeBothEmpDept": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 80,
+								"computeType": "MemoryOptimized"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/employee_department')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EmployeeAggregateDatabyDeptName')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "AggregateEmpByDept_Join",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Employee": {},
+									"department": {},
+									"OutputDatabyDepartmentName": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ErrorOutputRows')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ErrorData",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "ErrorRowsMove",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"RawData": {},
+									"BadDataImport": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/ErrorRowsMove')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "SCD2",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "SCD2",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"EmpDataTxtFile": {},
+									"SQLEmpTable": {},
+									"tblEmployee": {},
+									"UpdateInactiveinSQL": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/SCD2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/schedule_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "copydata_sql_sql_tables",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"src_tblNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline')]",
+							"src_dbNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline')]",
+							"src_serverName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName')]",
+							"src_userName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName')]",
+							"src_password": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password')]",
+							"Des_serverName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName')]",
+							"Des_tiuserName": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName')]",
+							"Des_password": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password')]",
+							"des_tableNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline')]",
+							"des_dbNamefrompipeline": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 10,
+						"startTime": "2021-09-20T07:30:00",
+						"endTime": "2021-09-21T02:50:39",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

@@ -1,0 +1,298 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfmadhurdemo"
+		},
+		"AzureSQL_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSQL'"
+		},
+		"BlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'BlobStorage'"
+		},
+		"CosmosDbMongoDb_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDbMongoDb'"
+		},
+		"FaltFileStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'FaltFileStorage'"
+		},
+		"InboxFolderFIleName_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'InboxFolderFIleName'"
+		},
+		"LS_BlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_BlobStorage'"
+		},
+		"LS_SQLLogin_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_SQLLogin'"
+		},
+		"LS_SQLServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_SQLServer'"
+		},
+		"LS_SqlConnection_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_SqlConnection'"
+		},
+		"LS_madhurstorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_madhurstorage'"
+		},
+		"OnPremise_SQLServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'OnPremise_SQLServer'"
+		},
+		"adf_blob_storage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'adf_blob_storage'"
+		},
+		"linkedservice_sql_parametrised_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'linkedservice_sql_parametrised'"
+		},
+		"linkedservice_storageDemoMadhur_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'linkedservice_storageDemoMadhur'"
+		},
+		"parametrised_SqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'parametrised_SqlServer'"
+		},
+		"CosmosDbMongoDb_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"InboxFolderFIleName_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://madhursadftorage.dfs.core.windows.net/"
+		},
+		"Event_trigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/2eb288f0-205d-43c5-9356-449b90daee2e/resourceGroups/learn-7ca565da-b5f3-4c0d-866e-0e2e1de2f1e0/providers/Microsoft.Storage/storageAccounts/madhurstorage"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "SSIS_Demo"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName": {
+			"type": "string",
+			"defaultValue": "MADHUR-PC"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName": {
+			"type": "string",
+			"defaultValue": "madhur01"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName": {
+			"type": "string",
+			"defaultValue": "madhurtest.database.windows.net"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName": {
+			"type": "string",
+			"defaultValue": "madhur"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password": {
+			"type": "string",
+			"defaultValue": "Pass#word1"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "CountryRegion"
+		},
+		"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline": {
+			"type": "string",
+			"defaultValue": "madhurdb"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adfmadhurdemo_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureSQL_connectionString": {
+						"value": "[parameters('AzureSQL_connectionString')]"
+					},
+					"BlobStorage_connectionString": {
+						"value": "[parameters('BlobStorage_connectionString')]"
+					},
+					"CosmosDbMongoDb_connectionString": {
+						"value": "[parameters('CosmosDbMongoDb_connectionString')]"
+					},
+					"FaltFileStorage_connectionString": {
+						"value": "[parameters('FaltFileStorage_connectionString')]"
+					},
+					"InboxFolderFIleName_accountKey": {
+						"value": "[parameters('InboxFolderFIleName_accountKey')]"
+					},
+					"LS_BlobStorage_connectionString": {
+						"value": "[parameters('LS_BlobStorage_connectionString')]"
+					},
+					"LS_SQLLogin_connectionString": {
+						"value": "[parameters('LS_SQLLogin_connectionString')]"
+					},
+					"LS_SQLServer_connectionString": {
+						"value": "[parameters('LS_SQLServer_connectionString')]"
+					},
+					"LS_SqlConnection_connectionString": {
+						"value": "[parameters('LS_SqlConnection_connectionString')]"
+					},
+					"LS_madhurstorage_connectionString": {
+						"value": "[parameters('LS_madhurstorage_connectionString')]"
+					},
+					"OnPremise_SQLServer_connectionString": {
+						"value": "[parameters('OnPremise_SQLServer_connectionString')]"
+					},
+					"adf_blob_storage_connectionString": {
+						"value": "[parameters('adf_blob_storage_connectionString')]"
+					},
+					"linkedservice_sql_parametrised_connectionString": {
+						"value": "[parameters('linkedservice_sql_parametrised_connectionString')]"
+					},
+					"linkedservice_storageDemoMadhur_connectionString": {
+						"value": "[parameters('linkedservice_storageDemoMadhur_connectionString')]"
+					},
+					"parametrised_SqlServer_connectionString": {
+						"value": "[parameters('parametrised_SqlServer_connectionString')]"
+					},
+					"CosmosDbMongoDb_properties_typeProperties_database": {
+						"value": "[parameters('CosmosDbMongoDb_properties_typeProperties_database')]"
+					},
+					"InboxFolderFIleName_properties_typeProperties_url": {
+						"value": "[parameters('InboxFolderFIleName_properties_typeProperties_url')]"
+					},
+					"Event_trigger_properties_typeProperties_scope": {
+						"value": "[parameters('Event_trigger_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "adfmadhurdemo_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfmadhurdemo_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "adfmadhurdemo_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfmadhurdemo_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "adfmadhurdemo_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_tblNamefrompipeline')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_dbNamefrompipeline')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_serverName')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_userName')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_src_password')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_serverName')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_tiuserName')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_Des_password')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_tableNamefrompipeline')]"
+					},
+					"schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline": {
+						"value": "[parameters('schedule_trigger_properties_copydata_sql_sql_tables_parameters_des_dbNamefrompipeline')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfmadhurdemo_ArmTemplate_2')]"
+			]
+		}
+	]
+}
