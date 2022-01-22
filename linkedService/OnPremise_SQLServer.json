@@ -7,10 +7,6 @@
 		"typeProperties": {
 			"connectionString": "integrated security=False;data source=madhur-pc;initial catalog=ssis_demo;user id=madhur01",
 			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2YTc4NTE1Yi0xYTE4LTQ3OGUtYjdlYy1hOTk1YTY5ZDNmMTIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
-		},
-		"connectVia": {
-			"referenceName": "IR-SelfHosted",
-			"type": "IntegrationRuntimeReference"
 		}
 	}
 }
