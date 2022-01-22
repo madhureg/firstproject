@@ -1,0 +1,9 @@
+{
+	"name": "adfmadhurdemo",
+	"location": "westus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "e3707b14-eb37-43cd-b1ea-52334a590bd4",
+		"tenantId": "604c1504-c6a3-4080-81aa-b33091104187"
+	}
+}

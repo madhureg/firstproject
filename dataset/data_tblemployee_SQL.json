@@ -1,0 +1,46 @@
+{
+	"name": "data_tblemployee_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQLLogin",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "surKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "empId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "empName",
+				"type": "varchar"
+			},
+			{
+				"name": "empGender",
+				"type": "varchar"
+			},
+			{
+				"name": "deptId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "isActive",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tbl_employee"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

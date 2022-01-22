@@ -1,0 +1,42 @@
+{
+	"name": "data_employee_txtfile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adf_blob_storage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "employee.txt",
+				"folderPath": "source",
+				"container": "adfstorage"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "empId",
+				"type": "String"
+			},
+			{
+				"name": "empName",
+				"type": "String"
+			},
+			{
+				"name": "empGender",
+				"type": "String"
+			},
+			{
+				"name": "deptId",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,64 @@
+{
+	"name": "SCD2",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "data_employee_txtfile",
+						"type": "DatasetReference"
+					},
+					"name": "EmpDataTxtFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "data_tblemployee_SQL",
+						"type": "DatasetReference"
+					},
+					"name": "SQLEmpTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "data_tblemployee_SQL",
+						"type": "DatasetReference"
+					},
+					"name": "tblEmployee"
+				},
+				{
+					"dataset": {
+						"referenceName": "data_tblemployee_SQL",
+						"type": "DatasetReference"
+					},
+					"name": "UpdateInactiveinSQL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "isActiveColumnAdd"
+				},
+				{
+					"name": "RenameColumns"
+				},
+				{
+					"name": "Lookup1"
+				},
+				{
+					"name": "RemoveNulls"
+				},
+				{
+					"name": "RemoveUnWantedColumns"
+				},
+				{
+					"name": "isActiveCheck"
+				},
+				{
+					"name": "UpdateRows"
+				}
+			],
+			"script": "source(output(\n\t\tempId as integer,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> EmpDataTxtFile\nsource(output(\n\t\tsurKey as integer,\n\t\tempId as integer,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as integer,\n\t\tisActive as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SQLEmpTable\nEmpDataTxtFile derive(isActive = 1) ~> isActiveColumnAdd\nSQLEmpTable select(mapColumn(\n\t\tSQL_surKey = surKey,\n\t\tSQL_empId = empId,\n\t\tSQL_empName = empName,\n\t\tSQL_empGender = empGender,\n\t\tSQL_deptId = deptId,\n\t\tSQL_isActive = isActive\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RenameColumns\nEmpDataTxtFile, RenameColumns lookup(empId == SQL_empId,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup1\nLookup1 filter(!isNull(SQL_empId)) ~> RemoveNulls\nRemoveNulls select(mapColumn(\n\t\tSQL_surKey,\n\t\tSQL_empId,\n\t\tSQL_empName,\n\t\tSQL_empGender,\n\t\tSQL_deptId,\n\t\tSQL_isActive\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RemoveUnWantedColumns\nRemoveUnWantedColumns derive(SQL_isActive = 0) ~> isActiveCheck\nisActiveCheck alterRow(updateIf(1==1)) ~> UpdateRows\nisActiveColumnAdd sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tsurKey as integer,\n\t\tempId as integer,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as integer,\n\t\tisActive as integer\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tempId,\n\t\tempName,\n\t\tempGender,\n\t\tdeptId,\n\t\tisActive\n\t)) ~> tblEmployee\nUpdateRows sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tsurKey as integer,\n\t\tempId as integer,\n\t\tempName as string,\n\t\tempGender as string,\n\t\tdeptId as integer,\n\t\tisActive as integer\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['surKey'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tsurKey = SQL_surKey,\n\t\tempId = SQL_empId,\n\t\tempName = SQL_empName,\n\t\tempGender = SQL_empGender,\n\t\tdeptId = SQL_deptId,\n\t\tisActive = SQL_isActive\n\t)) ~> UpdateInactiveinSQL"
+		}
+	}
+}
