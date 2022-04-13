@@ -1,0 +1,88 @@
+{
+	"name": "ds_source_blob",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_blobservices",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "input"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "QUERYDEFINITION_KEY",
+				"type": "String"
+			},
+			{
+				"name": "FILE_PROCESSED_TIME_KEY",
+				"type": "String"
+			},
+			{
+				"name": "QUERYID",
+				"type": "String"
+			},
+			{
+				"name": "QUERYNAME",
+				"type": "String"
+			},
+			{
+				"name": "QUERYIDENTITY",
+				"type": "String"
+			},
+			{
+				"name": "QUERYVERSION",
+				"type": "String"
+			},
+			{
+				"name": "LOWTHRESHOLD",
+				"type": "String"
+			},
+			{
+				"name": "MEDIUMTHRESHOLD",
+				"type": "String"
+			},
+			{
+				"name": "HIGHTHRESHOLD",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMTHRESHOLD",
+				"type": "String"
+			},
+			{
+				"name": "LANGUAGEPACK",
+				"type": "String"
+			},
+			{
+				"name": "SRC_FILE_NAME",
+				"type": "String"
+			},
+			{
+				"name": "CREATE_DT",
+				"type": "String"
+			},
+			{
+				"name": "LAST_UPDATE_DT",
+				"type": "String"
+			},
+			{
+				"name": "MEDIATYPE",
+				"type": "String"
+			},
+			{
+				"name": "ISLIVE",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

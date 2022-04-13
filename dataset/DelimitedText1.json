@@ -2,21 +2,30 @@
 	"name": "DelimitedText1",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "linkedservice_storageDemoMadhur",
+			"referenceName": "ls_gen2",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
-				"folderPath": "inbox",
-				"container": "adfstorage"
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@string(dayOfMonth(formatDateTime(utcnow())))",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@string(dayOfYear(formatDateTime(utcnow())))",
+					"type": "Expression"
+				},
+				"fileSystem": "catalogue"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
+			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
 		"schema": []
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }

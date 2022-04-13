@@ -1,0 +1,9 @@
+{
+	"name": "adfdemomadhur",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "29957cb4-36d7-460c-8652-f01913a2c7ce",
+		"tenantId": "1e7cf846-b176-4c76-bb16-b84b16018d1b"
+	}
+}
