@@ -1,0 +1,73 @@
+{
+	"name": "Delete files older than 30 days1",
+	"properties": {
+		"description": "Please input a folder path as the parameter for this pipeline, and the pipeline will delete files which were last modified more than 30 days ago under the particular folder path.",
+		"activities": [
+			{
+				"name": "DeleteFiles",
+				"description": "Connect to your storage account to save the log file.",
+				"type": "Delete",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "BinaryDatasetForDeleteActivity1",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": {
+								"value": "@pipeline().parameters.SourceFolder",
+								"type": "Expression"
+							},
+							"Directory": {
+								"value": "@pipeline().parameters.SourceDirectory",
+								"type": "Expression"
+							}
+						}
+					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "linkedService1",
+							"type": "LinkedServiceReference"
+						},
+						"path": {
+							"value": "@pipeline().parameters.LoggingPath",
+							"type": "Expression"
+						}
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"modifiedDatetimeEnd": {
+							"value": "@{adddays(pipeline().TriggerTime, -30)}",
+							"type": "Expression"
+						},
+						"wildcardFileName": "*"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"SourceFolder": {
+				"type": "string",
+				"defaultValue": "sourcefolder"
+			},
+			"SourceDirectory": {
+				"type": "string",
+				"defaultValue": "subfolder"
+			},
+			"LoggingPath": {
+				"type": "string",
+				"defaultValue": "loggingfolder/subfolder"
+			}
+		},
+		"annotations": []
+	}
+}
